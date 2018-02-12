@@ -1,8 +1,6 @@
 import urllib2
-
 import feedparser
 from bs4 import BeautifulSoup
-from urlparse import urljoin
 import sqlite3 as sqlite
 import re
 
@@ -23,7 +21,6 @@ class scraper:
     def scrap(self,rssFeed):
         rss = feedparser.parse(rssFeed)
         for entry in rss.entries:
-            print(entry)
             title = entry["title"]
             author = entry["author"]
             published = entry["published_parsed"]
@@ -42,11 +39,11 @@ class scraper:
             #if self.isindexed(url): return
             print 'Indexing ' + url
             # Get the individual words
-            text = self.getText(soup)
+            text = self.getArticle(soup)
             words = self.separatewords(text)
 
             # Get the URL id
-            cur = self.con.execute("insert into wordList (title,source,author,link,published,file) values ('%s', '%s', '%s', '%s', '%s', '%s')" % (title, 'NYT', author, published, url, 'NaN'))
+            cur = self.con.execute("insert into articleList (title,source,author,link,published,file) values ('%s', '%s', '%s', '%s', '%s', '%s')" % (title, 'NYT', author, published, url, 'NaN'))
             articleid = cur.lastrowid
 
             # Link each word to this url
@@ -62,19 +59,31 @@ class scraper:
                 cur = self.con.execute("select rowid from wordCount where articleid=%d and wordid=%d" %(articleid, wordid))
                 res = cur.fetchone()
                 if res == None:
-                    self.con.execute("insert into wordCount(urlid,wordid,wcount) values (%d,%d,%d)" % (articleid, wordid, 1))
+                    self.con.execute("insert into wordCount(articleid,wordid,wcount) values (%d,%d,%d)" % (articleid, wordid, 1))
                 else:
                     self.con.execute("update wordCount set wcount = wcount + 1 where articleid=%d and wordid=%d" %(articleid, wordid))
 
 # Extract the text from an HTML page (no tags)
-    def getText(self, soup):
+    def getArticle(self, soup):
         matches = soup.findAll("p", {"class": "story-body-text story-content"})
         resultText = ''
         for p in matches:
-           text = p.contents[0]
-           resultText += text + '\n'
+            text = self.getText(p)
+            print(text)
+            resultText += text + '\n'
         return resultText
 
+    def getText(self,soup):
+        v = soup.string
+        if v == None:
+            c = soup.contents
+            resulttext = ''
+            for t in c:
+                subtext = self.getText(t)
+                resulttext += subtext + ' '
+            return resulttext
+        else:
+            return v.strip()
 
 # Separate the words by any non-whitespace character
     def separatewords(self,text):
@@ -99,6 +108,6 @@ class scraper:
 
         self.con.execute('create index wordidx on wordList(word)')
         self.con.execute('create index articleidx on articleList(title)')
-        self.con.execute('create index articleidx on wordCount(articleid)')
-        self.con.execute('create index wordidx on wordCount(wordid)')
+        self.con.execute('create index articlewordidx on wordCount(articleid)')
+        self.con.execute('create index wordarticleidx on wordCount(wordid)')
         self.dbcommit()
