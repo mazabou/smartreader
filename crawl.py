@@ -36,14 +36,21 @@ class scraper:
 
             # Index an individual page
     def addtoindex(self, url, soup, title, author, published):
-            #if self.isindexed(url): return
+            if self.isindexed(url): return
             print 'Indexing ' + url
             # Get the individual words
             text = self.getArticle(soup)
+            text = text.encode('utf-8')
+
+            filename = './src/'+title + '.txt'
+            file = open(filename,'w')
+            file.write(text)
+            file.close()
+
             words = self.separatewords(text)
 
             # Get the URL id
-            cur = self.con.execute("insert into articleList (title,source,author,link,published,file) values ('%s', '%s', '%s', '%s', '%s', '%s')" % (title, 'NYT', author, published, url, 'NaN'))
+            cur = self.con.execute("insert into articleList (title,source,author,link,published,file) values ('%s', '%s', '%s', '%s', '%s', '%s')" % (title, 'NYT', author, published, url, filename))
             articleid = cur.lastrowid
 
             # Link each word to this url
@@ -69,7 +76,6 @@ class scraper:
         resultText = ''
         for p in matches:
             text = self.getText(p)
-            print(text)
             resultText += text + '\n'
         return resultText
 
@@ -92,14 +98,9 @@ class scraper:
 
 # Return true if this url is already indexed
     def isindexed(self,url):
-        u = self.con.execute("select rowid from urllist where url='%s'" % url).fetchone()
-        if u != None:
-            # Check if it has actually been crawled
-            v = self.con.execute('select * from wordlocation where urlid=%d' % u[0]).fetchone()
-            if v != None: return True
-        return False
-
-
+        u = self.con.execute("select rowid from articleList where link='%s'" % url).fetchone()
+        return (u != None)
+            
 # Create the database tables
     def createindextables(self):
         self.con.execute('create table articleList(title,source,author,link,published,file)')
