@@ -1,0 +1,6 @@
+NYT http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml
+NYTTechnology http://feeds.nytimes.com/nyt/rss/Technology
+NYTSports http://www.nytimes.com/services/xml/rss/nyt/Sports.xml
+NYTScience http://www.nytimes.com/services/xml/rss/nyt/Science.xml
+NYTBusiness	http://feeds.nytimes.com/nyt/rss/Business
+NYTWorld http://www.nytimes.com/services/xml/rss/nyt/World.xml
