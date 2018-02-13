@@ -1,4 +1,4 @@
-##Projet
+## Projet
 ### Télécharger les articles d'actualité à partir de plusieurs flux (Base de données)
 1. Les principaux médias proposent des flux RSS:   
    RSS =<titre> + <description> de l'article + un <lien> vers le site concerné
