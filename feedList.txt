@@ -2,5 +2,10 @@ NYT http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml
 NYTTechnology http://feeds.nytimes.com/nyt/rss/Technology
 NYTSports http://www.nytimes.com/services/xml/rss/nyt/Sports.xml
 NYTScience http://www.nytimes.com/services/xml/rss/nyt/Science.xml
-NYTBusiness	http://feeds.nytimes.com/nyt/rss/Business
+NYTBusiness http://feeds.nytimes.com/nyt/rss/Business
 NYTWorld http://www.nytimes.com/services/xml/rss/nyt/World.xml
+TechCrunch http://feeds.feedburner.com/TechCrunch/
+CNBC https://www.cnbc.com/id/100003114/device/rss/rss.html
+CNBCTech https://www.cnbc.com/id/19854910/device/rss/rss.html
+CNBCBusiness https://www.cnbc.com/id/10001147/device/rss/rss.html
+CNBCPolitics https://www.cnbc.com/id/10000113/device/rss/rss.html
