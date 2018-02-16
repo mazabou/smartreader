@@ -1,3 +1,6 @@
+from math import sqrt
+from PIL import Image,ImageDraw
+
 class bicluster:
     def __init__(self, vec, left=None, right=None, distance=0.0, id=None):
         self.left = left
@@ -14,18 +17,23 @@ class analyze:
         self.con.close()
 
     def cleandata(self):
-        N = 600
-        self.con.execute("delete from wordCount where wordid in (SELECT DISTINCT wordid FROM wordCount GROUP BY wordid HAVING count(wcount) > %s" %(300))
+        self.con.execute("")
+        self.con.execute("delete from wordList where wordid in (select distinct wordid from wordCount group by wordid HAVING count(*)> %s or count(*)< %s)" %(500,15))
+        self.con.execute("delete from wordCount where wordid in (select distinct wordid from wordCount group by wordid HAVING count(*)> %s or count(*)< %s)" %(500,15))
         self.con.commit()
 
     def readdb(self):
-        words = [t[0] for t in self.con.execute('select word from wordList').fetchall()]
+        words_tuple = self.con.execute('select word,wordid from wordList').fetchall()
+        words = [t[0] for t in words_tuple]
+        wordids = {}
+        for i in range(len(words)):
+            wordids[words_tuple[i][1]]=i
         articles = [t[0] for t in self.con.execute('select title from articleList').fetchall()]
         data = self.con.execute('select articleid,wordid,wcount from wordCount').fetchall()
         #count = [[0]*len(words)]*len(articles)
         count = [[0]*len(words) for i in range(len(articles))]
         for t in data:
-            count[t[0]-1][t[1]-1]=t[2]
+            count[t[0]-1][wordids[t[1]]]=t[2]
         return articles, words, count
 
     def pearson(v1, v2):
@@ -118,7 +126,7 @@ class analyze:
         w = 1200
         depth = self.getdepth(clust)
         # width is fixed, so scale distances accordingly
-        scaling = float(w - 150) / depth
+        scaling = float(w - 700) / depth
         # Create a new image with a white background
         img = Image.new('RGB', (w, h), (255, 255, 255))
         draw = ImageDraw.Draw(img)
