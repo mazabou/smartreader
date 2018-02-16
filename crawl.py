@@ -10,9 +10,12 @@ ignorewords=set(['the','of','to','and','a','in','is','it'])
 
 class scraper:
 # Initialize the crawler with the name of database
-    def __init__(self,dbname):
+    def __init__(self,dbname,filename="rssList.txt"):
+        print "Connecting to the database "+dbname
         self.con = sqlite.connect(dbname)
         self.rssList = {}
+        print "Extracting rss feeds from "+filename
+        self.setFeedList(filename)
 
     def __del__(self):
         self.con.close()
@@ -31,6 +34,8 @@ class scraper:
         for rssName in self.rssList.keys():
             rssFeed = self.rssList[rssName]
             rss = feedparser.parse(rssFeed)
+            print "Connecting to "+rssName
+            print "--------------"
             for entry in rss.entries:
                 title = entry["title"]
                 try:
@@ -63,16 +68,18 @@ class scraper:
             text = text.encode('utf-8') #probleme d'encodage rencontre
 
             ## Il faut supprimer ou renommer le repertoire src
-            #s = title.encode('utf-8')
-            #s = str(s).strip().replace(' ', '_')
-            #filename = re.sub(r'(?u)[^-\w.]', '', s)
-            #filename = './src/'+ filename + '.txt'
-            #file = open(filename,'w')
-            #file.write(text)
-            #file.close()
-            filename = "None"
+            s = title.encode('utf-8')
+            s = str(s).strip().replace(' ', '_')
+            filename = re.sub(r'(?u)[^-\w.]', '', s)
+            filename = './src/'+ filename + '.txt'
+            try:
+                file = open(filename,'w')
+                file.write(text)
+                file.close()
+            except:
+                print "Error, filename = "+ filename
+                filename = "None"
             words = self.separatewords(text)
-
             # Get the URL id
             cur = self.con.execute("insert into articleList (title,source,author,link,published,file) values (?, ?, ?, ?, ?, ?)", (title, source, author, url, published, filename))
             articleid = cur.lastrowid
@@ -125,7 +132,7 @@ class scraper:
 
 # Separate the words by any non-whitespace character
     def separatewords(self,text):
-        splitter = re.compile('\\W*')
+        splitter = re.compile(r'\W*')
         return self.filter([s.lower() for s in splitter.split(text) if s != ''])
 
     def filter(self,words):
@@ -138,11 +145,13 @@ class scraper:
 
 # Create the database tables
     def createindextables(self):
+        print "Creating a file repertory for raw texts"
         os.rename("./src","./src_old")
         os.mkdir("./src")
 
+        print "Creating SQL tables"
         self.con.execute('create table articleList(title,source,author,link,published,file)')
-        self.con.execute('create table wordList(word)')
+        self.con.execute('create table wordList(word,wordid integer primary key)')
         self.con.execute('create table wordCount(articleid,wordid,wcount)')
 
         self.con.execute('create index wordidx on wordList(word)')
