@@ -22,6 +22,5 @@ def tfidf(occvector,df,N):
     occvector = numpy.dot(occvector, math.log(df/N))
     return occvector
 
-
 dic={'arbre':2,'lol':0,'nullissime':1,"occurnece semi-entiere":0.5}
 print(termFreq(dic))

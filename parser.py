@@ -1,12 +1,15 @@
 import urllib2
 import feedparser
 from bs4 import BeautifulSoup
-import sqlite3 as sqlite
 import re
 import os
+import snowballstemmer
 
 from ParseTotxt import ParseTotxt
 from ParseTodb import ParseTodb
+
+# Create a list of words to ignore
+ignorewords=set(['the','of','to','and','a','in','is','it','an','by','from','with'])
 
 class Parser:
     def __init__(self,out="txt",rssFile="rssList.txt",quickCheck=False):
@@ -69,6 +72,10 @@ class Parser:
                 text = self.getArticleP(soup)
             text = text.encode('utf-8') #probleme d'encodage rencontre
             words = self.separatewords(text)
+
+            stemmer = snowballstemmer.stemmer('english');
+            words = stemmer.stemWords(words)
+
             self.out.add(title, source, author, url, published, words)
         
 
@@ -107,7 +114,7 @@ class Parser:
         return self.filter([s.lower() for s in splitter.split(text) if s != ''])
 
     def filter(self,words):
-        return [word for word in words if (len(word)>1 and word.isalpha())] #list comprehension
+        return [word for word in words if (len(word)>1 and word.isalpha() and word not in ignorewords)] #list comprehension
 
     def readfile(self):
         return self.out.readfile()
