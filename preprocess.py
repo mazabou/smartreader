@@ -10,7 +10,7 @@ def readfile():
     rownames = []
     data = []
     for line in lines[1:]:
-    	p = line.strip().split('\t')
+        p = line.strip().split('\t')
         # First column in each row is the rowname
         rownames.append(p[0])
         # The data for this row is the remainder of the row
@@ -18,6 +18,21 @@ def readfile():
     fileMatrix.close()
     fileInfo.close()
     return rownames, colnames, data
+
+def writefile(rownames, colnames, data):
+    fileMatrix=open('articlewordmatrix_processed.txt','w')
+
+    fileMatrix.write('Article')
+    for word in colnames: fileMatrix.write('\t%s' % word)
+    fileMatrix.write('\n')
+
+    for i in range(len(rownames)):
+        fileMatrix.write(rownames[i])
+        row = '\t' + '\t'.join(map(str, data[i])) + '\n'
+        fileMatrix.write(row)
+    
+    fileMatrix.close()
+
 
 #Convert the data matrix to a tf matrix
 def tf(data):
@@ -35,25 +50,25 @@ def termfreq(v):
 
 #inverse document frequency	
 def docap(data):
-	N = len(data)
-    return [sum([c and 1 for c in x]) for x in zip(*data)]/N
+    N = len(data)
+    return [o/N for o in [sum([c and 1 for c in x]) for x in zip(*data)]]
 
 def invdocfreq(data):
-	return [np.log(1/x) for x in docap(data)]
+    return [np.log(1/x) for x in docap(data)]
 
 def pruning(data,colnames,lowerthreshold,higherthreshold):
-	matrix, words = data[:],colnames[:]
-	apvec = docap(matrix)
-	wordstodel = []
-	for i in range(len(apvec)):
-		if apvec[i] not in [lowerthreshold,higherthreshold]:
-			wordstodel = [i] + wordstodel # or append than reverse?
-	for wordid in wordstodel:
-		for v in matrix:
-			del v[wordid]
-		del words[wordid]
-	return matrix,words
+    matrix, words = data[:], colnames[:]
+    apvec = docap(matrix)
+    wordstodel = []
+    for i in range(len(apvec)):
+        if not lowerthreshold < apvec[i] < higherthreshold:
+            wordstodel = [i] + wordstodel # or append than reverse?
+    for wordid in wordstodel:
+        for v in matrix:
+            del v[wordid]
+        del words[wordid]
+    return matrix,words
 
 def truncation(data):
-	pass
+    pass
 
