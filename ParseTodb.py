@@ -1,3 +1,5 @@
+import sqlite3 as sqlite
+
 class ParseTodb:
     def __init__(self):
         dbname = "parseddata.db"

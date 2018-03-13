@@ -37,6 +37,7 @@ class ParseTotxt:
 	            if word not in wordlist:
 	                wordlist.append(word)
 
+	    self.fileMatrix.write('Article')
 	    for word in wordlist: self.fileMatrix.write('\t%s' % word)
 	    self.fileMatrix.write('\n')
 	    for article, wc in self.wordcounts.items():
@@ -47,6 +48,7 @@ class ParseTotxt:
 	            if word in wc: self.fileMatrix.write('\t%d' % wc[word])
 	            else: self.fileMatrix.write('\t0')
 	        self.fileMatrix.write('\n')
+	        
 	    for d in self.articles:
 	        try:
 	            self.fileInfo.write(d)
