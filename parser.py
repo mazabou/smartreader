@@ -5,43 +5,31 @@ import sqlite3 as sqlite
 import re
 import os
 
+from ParseTotxt import ParseTotxt
+
 # Create a list of words to ignore
 ignorewords=set(['the','of','to','and','a','in','is','it'])
 
 class Parser:
-    def __init__(self,filename="parsedData.txt",rssFile="rssList.txt"):
+    def __init__(self,out="txt",rssFile="rssList.txt",quickCheck=False):
         # Set up the output
-        fileExtension = re.findall(r".*?\.(\w+)",filename)[0]
+        if out == "txt":
+            self.out = ParseTotxt()
+        if quickCheck:
+            print 'Warning: This will only be parsing one RSS feed for testing purposes'
+            self.rssList={"NYT":"http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml"}
+        else:
+            # Pulling the data from the rss file
+            self.rssList = {} 
+            print "Pulling the RSS Feeds list from " + rssFile
+            self.setFeedList(rssFile)
 
-        if fileExtension not in ["txt","db"]:
-            filename, fileExtension = "parsedData.txt","txt"
-            print "Error with the filename, parsedData.txt is chosen instead as the output file"
-        else: 
-            print filename+"is the output file"
-
-        opt = {"txt":(self.initTXT,self.addToTXT,self.isindexedTXT,self.commitTXT),"db":(self.initDB,self.addToDB,self.isindexedDB,self.commitDB)}
-        self.initialize,self.add,self.isindexed,self.commit = opt[fileExtension]
-
-        self.initialize(filename)
-
-        # Pulling the data from the rss file
-        self.rssList = {} 
-        print "Pulling the RSS Feeds list from " + rssFile
-        self.setFeedList(rssFile)
-
-
-    def initTXT(self,filename):
-        self.fileInfo=open(filename,'w')
-        self.file=open("matrix_"+filename,'w')
-        self.wordcounts={}
-        self.articleList=[]
-        self.articles=[]
 
     def initDB(self,filename):
         print "Connecting to the database "+dbname
         self.con = sqlite.connect(dbname)
-        self.rssList = {}
-        print "Extracting rss feeds from "+filename
+        if self.new:
+            self.createindextables()
 
 
     def setFeedList(self,filename):
@@ -75,11 +63,11 @@ class Parser:
                     continue
                 soup = BeautifulSoup(c.read(),"html.parser")
                 self.addtoindex(url, soup, title, rssName, author, published)
-        self.commit()
+        self.out.commit()
 
     # Index an individual page
     def addtoindex(self, url, soup, title, source, author, published):
-            if self.isindexed(url): return
+            if self.out.isindexed(url): return
             print 'Indexing ' + url
             # Get the individual words
             if source[:2] == "NYT":
@@ -87,26 +75,13 @@ class Parser:
             else:
                 text = self.getArticleP(soup)
             text = text.encode('utf-8') #probleme d'encodage rencontre
-
-            ## Il faut supprimer ou renommer le repertoire src
-            s = title.encode('utf-8')
-            s = str(s).strip().replace(' ', '_')
-            filename = re.sub(r'(?u)[^-\w.]', '', s)
-            filename = './src/'+ filename + '.txt'
-            try:
-                file = open(filename,'w')
-                file.write(text)
-                file.close()
-            except:
-                print "Error, filename = "+ filename
-                filename = "None"
             words = self.separatewords(text)
-            self.add(title, source, author, url, published, filename, words)
+            self.out.add(title, source, author, url, published, words)
             
 
-    def addToDB(self,title, source, author, url, published, filename, words):
+    def addToDB(self,title, source, author, url, published , words):
             # Get the URL id
-            cur = self.con.execute("insert into articleList (title,source,author,link,published,file) values (?, ?, ?, ?, ?, ?)", (title, source, author, url, published, filename))
+            cur = self.con.execute("insert into articleList (title,source,author,link,published,file) values (?, ?, ?, ?, ?, ?)", (title, source, author, url, published))
             articleid = cur.lastrowid
 
             # Link each word to this url
@@ -125,17 +100,6 @@ class Parser:
                     self.con.execute("insert into wordCount(articleid,wordid,wcount) values (%d,%d,%d)" % (articleid, wordid, 1))
                 else:
                     self.con.execute("update wordCount set wcount = wcount + 1 where articleid=%d and wordid=%d" %(articleid, wordid))
-
-    def addToTXT(self,title, source, author, url, published, filename,words):
-        self.articleList.append(url)
-
-        self.articles.append(title+"\t"+source+"\t"+author+"\t"+url+"\t"+published+"\t"+filename)
-
-        wc={}
-        for word in words:
-            wc.setdefault(word,0)
-            wc[word]+=1
-        self.wordcounts[url]=wc
 
 # Extract the text from an HTML page (no tags)
     def getArticleNYT(self, soup):
@@ -179,51 +143,11 @@ class Parser:
         u = self.con.execute("select rowid from articleList where link='%s'" % url).fetchone()
         return (u != None)
 
-    def isindexedTXT(self,url):
-        return url in self.articleList
-
     def commitDB(self):
         self.con.commit()
 
-    def commitTXT(self):
-        apcount={}
-        for wc in self.wordcounts.values():
-            for word,count in wc.items():
-                apcount.setdefault(word,0)
-                if count>1:
-                    apcount[word]+=1
-
-        wordlist=[]
-        for w,bc in apcount.items():
-            frac=float(bc)/len(self.articleList)
-            if frac>0.1 and frac<0.5: wordlist.append(w)
-
-        self.file.write('Article')
-        for word in wordlist: self.file.write('\t%s' % word)
-        self.file.write('\n')
-        for article, wc in self.wordcounts.items():
-            #deal with unicode outside the ascii range
-            #blog=blog.encode('ascii','ignore')
-            self.file.write(article)
-            for word in wordlist:
-                if word in wc: self.file.write('\t%d' % wc[word])
-                else: self.file.write('\t0')
-            self.file.write('\n')
-        for d in self.articles:
-            try:
-                self.fileInfo.write(d)
-            except:
-                self.fileInfo.write('error')
-            self.fileInfo.write('\n')
-        self.file.close()
-        self.fileInfo.close()
-
 # Create the database tables
     def createindextables(self):
-        print "Creating a file repertory for raw texts"
-        os.rename("./src","./src_old")
-        os.mkdir("./src")
-
         print "Creating SQL tables"
         self.con.execute('create table articleList(title,source,author,link,published,file)')
         self.con.execute('create table wordList(word,wordid integer primary key)')
@@ -234,3 +158,6 @@ class Parser:
         self.con.execute('create index articlewordidx on wordCount(articleid)')
         self.con.execute('create index wordarticleidx on wordCount(wordid)')
         self.dbcommit()
+
+    def readfile(self):
+        return self.out.readfile()
