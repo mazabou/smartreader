@@ -71,4 +71,6 @@ class ParseTotxt:
 	        rownames.append(p[0])
 	        # The data for this row is the remainder of the row
 	        data.append([float(x) for x in p[1:]])
+	    self.fileMatrix.close()
+	    self.fileInfo.close()
 	    return rownames, colnames, data
