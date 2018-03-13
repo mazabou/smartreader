@@ -3,14 +3,19 @@ import feedparser
 from bs4 import BeautifulSoup
 import sqlite3 as sqlite
 import re
+import os
 
 # Create a list of words to ignore
 ignorewords=set(['the','of','to','and','a','in','is','it'])
 
 class scraper:
 # Initialize the crawler with the name of database
-    def __init__(self,dbname):
+    def __init__(self,dbname,filename="rssList.txt"):
+        print "Connecting to the database "+dbname
         self.con = sqlite.connect(dbname)
+        self.rssList = {}
+        print "Extracting rss feeds from "+filename
+        self.setFeedList(filename)
 
     def __del__(self):
         self.con.close()
@@ -18,39 +23,65 @@ class scraper:
     def dbcommit(self):
         self.con.commit()
 
-    def scrap(self,rssFeed):
-        rss = feedparser.parse(rssFeed)
-        for entry in rss.entries:
-            title = entry["title"]
-            author = entry["author"]
-            published = entry["published_parsed"]
-            url = entry["link"]
-            try:
-                c = urllib2.urlopen(url)
-            except:
-                print "Could not open %s" % url
-                continue
-            soup = BeautifulSoup(c.read(),"html.parser")
-            self.addtoindex(url, soup, title, author, published)
-            self.dbcommit()
+    def setFeedList(self,filename):
+       file = open(filename)
+       for line in file: #? for line in file
+            rssName, rssFeed = line.strip().split(' ')
+            self.rssList[rssName] = rssFeed
+       file.close()
 
-            # Index an individual page
-    def addtoindex(self, url, soup, title, author, published):
+    def scrap(self):
+        for rssName in self.rssList.keys():
+            rssFeed = self.rssList[rssName]
+            rss = feedparser.parse(rssFeed)
+            print "Connecting to "+rssName
+            print "--------------"
+            for entry in rss.entries:
+                title = entry["title"]
+                try:
+                    author = entry["author"]
+                except:
+                    author = "None"
+                try:
+                    published = str(entry["published_parsed"])
+                except:
+                    published = "None"
+                url = entry["link"]
+                try:
+                    c = urllib2.urlopen(url)
+                except:
+                    print "Could not open %s" % url
+                    continue
+                soup = BeautifulSoup(c.read(),"html.parser")
+                self.addtoindex(url, soup, title, rssName, author, published)
+                self.dbcommit()
+
+    # Index an individual page
+    def addtoindex(self, url, soup, title, source, author, published):
             if self.isindexed(url): return
             print 'Indexing ' + url
             # Get the individual words
-            text = self.getArticle(soup)
-            text = text.encode('utf-8')
+            if source[:2] == "NYT":
+                text = self.getArticleNYT(soup)
+            else:
+                text = self.getArticleP(soup)
+            text = text.encode('utf-8') #probleme d'encodage rencontre
 
-            filename = './src/'+title + '.txt'
-            file = open(filename,'w')
-            file.write(text)
-            file.close()
-
+            ## Il faut supprimer ou renommer le repertoire src
+            s = title.encode('utf-8')
+            s = str(s).strip().replace(' ', '_')
+            filename = re.sub(r'(?u)[^-\w.]', '', s)
+            filename = './src/'+ filename + '.txt'
+            try:
+                file = open(filename,'w')
+                file.write(text)
+                file.close()
+            except:
+                print "Error, filename = "+ filename
+                filename = "None"
             words = self.separatewords(text)
-
             # Get the URL id
-            cur = self.con.execute("insert into articleList (title,source,author,link,published,file) values ('%s', '%s', '%s', '%s', '%s', '%s')" % (title, 'NYT', author, published, url, filename))
+            cur = self.con.execute("insert into articleList (title,source,author,link,published,file) values (?, ?, ?, ?, ?, ?)", (title, source, author, url, published, filename))
             articleid = cur.lastrowid
 
             # Link each word to this url
@@ -71,8 +102,16 @@ class scraper:
                     self.con.execute("update wordCount set wcount = wcount + 1 where articleid=%d and wordid=%d" %(articleid, wordid))
 
 # Extract the text from an HTML page (no tags)
-    def getArticle(self, soup):
+    def getArticleNYT(self, soup):
         matches = soup.findAll("p", {"class": "story-body-text story-content"})
+        resultText = ''
+        for p in matches:
+            text = self.getText(p)
+            resultText += text + '\n'
+        return resultText
+
+    def getArticleP(self,soup):
+        matches = soup.findAll("p")
         resultText = ''
         for p in matches:
             text = self.getText(p)
@@ -93,18 +132,26 @@ class scraper:
 
 # Separate the words by any non-whitespace character
     def separatewords(self,text):
-        splitter = re.compile('\\W*')
-        return [s.lower() for s in splitter.split(text) if s != '']
+        splitter = re.compile(r'\W*')
+        return self.filter([s.lower() for s in splitter.split(text) if s != ''])
+
+    def filter(self,words):
+        return [word for word in words if (len(word)>1 and word.isalpha())] #list comprehension
 
 # Return true if this url is already indexed
     def isindexed(self,url):
         u = self.con.execute("select rowid from articleList where link='%s'" % url).fetchone()
         return (u != None)
-            
+
 # Create the database tables
     def createindextables(self):
+        print "Creating a file repertory for raw texts"
+        os.rename("./src","./src_old")
+        os.mkdir("./src")
+
+        print "Creating SQL tables"
         self.con.execute('create table articleList(title,source,author,link,published,file)')
-        self.con.execute('create table wordList(word)')
+        self.con.execute('create table wordList(word,wordid integer primary key)')
         self.con.execute('create table wordCount(articleid,wordid,wcount)')
 
         self.con.execute('create index wordidx on wordList(word)')
