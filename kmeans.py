@@ -1,8 +1,8 @@
 from math import sqrt
-from PIL import Image,ImageDraw
-import random
-
+#from PIL import Image,ImageDraw
+import numpy as np
 from similarityMeasures import pearson
+import random
 
 def rotatematrix(data):
     newdata = []
@@ -43,7 +43,13 @@ def kcluster(rows, distance=pearson, k=4):
                 for j in range(len(avgs)):
                     avgs[j] /= len(bestmatches[i])
                 clusters[i] = avgs
-    return bestmatches
+	#Calculating Calinski and Harabaz Index
+	#c, center of E
+	c = [np.mean(L) for L in zip(*rows)]
+	W_k = sum([sum([distance(clusters[i], rows[j])**2 for j in bestmatches[i]]) for i in range(k)])
+	B_k = sum([distance(clusters[i], c)*len(bestmatches[i]) for i in range(k)])
+	s = ((B_k)/(W_k))*((len(rows)-k)/(k-1))
+    return bestmatches, s
 
 
 
@@ -93,7 +99,25 @@ def scaledown(data, distance=pearson, rate=0.01):
 
     return loc
 
-
+def optimized_kmeans(rows, distance=pearson):
+	list_data = []
+	for k in range(2,50):
+		print "------> k = " + str(k)
+		bestmatches, s = kcluster(rows, distance=pearson, k=k)
+		for i in range(10):
+			bestmatches_n, s_n = kcluster(rows, distance=pearson, k=k)
+			if s_n > s:
+				s = s_n
+				bestmatches = bestmatches_n
+		list_data.append([bestmatches, s])
+		if k > 4:
+			if list_data[-1][1] < list_data[-2][1]:
+				break
+	return k, max(list_data, key=lambda x: x[1])
+		
+				
+			
+	
 def draw2d(data, labels, jpeg='mds2d.jpg'):
     img = Image.new('RGB', (2000, 2000), (255, 255, 255))
     draw = ImageDraw.Draw(img)
