@@ -99,7 +99,25 @@ def scaledown(data, distance=pearson, rate=0.01):
 
     return loc
 
-
+def optimized_kmeans(rows, distance=pearson):
+	list_data = []
+	for k in range(2,50):
+		print "------> k = " + str(k)
+		bestmatches, s = kcluster(rows, distance=pearson, k=k)
+		for i in range(10):
+			bestmatches_n, s_n = kcluster(rows, distance=pearson, k=k)
+			if s_n > s:
+				s = s_n
+				bestmatches = bestmatches_n
+		list_data.append([bestmatches, s])
+		if k > 4:
+			if list_data[-1][1] < list_data[-2][1]:
+				break
+	return k, max(list_data, key=lambda x: x[1])
+		
+				
+			
+	
 def draw2d(data, labels, jpeg='mds2d.jpg'):
     img = Image.new('RGB', (2000, 2000), (255, 255, 255))
     draw = ImageDraw.Draw(img)
