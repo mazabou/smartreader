@@ -1,5 +1,6 @@
 from math import sqrt
 from PIL import Image,ImageDraw
+import numpy as np
 
 def rotatematrix(data):
     newdata = []
@@ -41,7 +42,13 @@ def kcluster(rows, distance=pearson, k=4):
                 for j in range(len(avgs)):
                     avgs[j] /= len(bestmatches[i])
                 clusters[i] = avgs
-    return bestmatches
+	#Calculating Calinski and Harabaz Index
+	#c, center of E
+	c = [np.mean(L) for L in zip(*rows)]
+	W_k = [[distance(cluster, row)^2 for row in bestmatches[i]].sum() for cluster in clusters].sum()
+	B_k = [distance(clusters[i], c)*len(bestmatches[i]) for i in range(k)].sum()
+	s = ((B_k)/(W_k))*((len(rows)-k)/(k-1))
+    return bestmatches, s
 
 
 
