@@ -5,7 +5,7 @@ import numpy
 def euclideanDistance(a,b):
     D=0
     for i in range(len(a)):
-        D=(a[i]-b[i])**2
+        D+=(a[i]-b[i])**2
     D = D**(1/2)
     return D
 

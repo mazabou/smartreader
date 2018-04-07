@@ -1,5 +1,8 @@
 from math import sqrt
 from PIL import Image,ImageDraw
+import random
+
+from similarityMeasures import pearson
 
 def rotatematrix(data):
     newdata = []
@@ -17,8 +20,7 @@ def kcluster(rows, distance=pearson, k=4):
 
     lastmatches = None
     for t in range(100):
-        print
-        'Iteration %d' % t
+        print 'Iteration %d' % t
         bestmatches = [[] for i in range(k)]
         # Find which centroid is the closest for each row
         for j in range(len(rows)):
@@ -48,7 +50,7 @@ def kcluster(rows, distance=pearson, k=4):
 def scaledown(data, distance=pearson, rate=0.01):
     n = len(data)
     # The real distances between every pair of items
-    realdist = [[distance(data[i], data[j]) for j in range(n)] for i in range(0, n)]
+    realdist = [[distance(data[i], data[j]) for j in range(n)] for i in range(n)]
     outersum = 0.0
     # Randomly initialize the starting points of the locations in 2D
     loc = [[random.random(), random.random()] for i in range(n)]
@@ -100,3 +102,9 @@ def draw2d(data, labels, jpeg='mds2d.jpg'):
         y = (data[i][1] + 0.5) * 1000
         draw.text((x, y), labels[i].encode('latin-1','ignore'), (0, 0, 0))
     img.save(jpeg, 'JPEG')
+
+def printcluster(clusters,rownames):
+    for c in kcluster:
+        for article in [rownames[r] for r in c]:
+            print article 
+        print '-------------------------------'

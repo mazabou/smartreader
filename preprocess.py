@@ -1,8 +1,8 @@
 import numpy as np
 
-def readfile():
+def readfile(filename='articlewordmatrix.txt'):
     fileInfo=open('articlesmetadata.txt')
-    fileMatrix=open('articlewordmatrix.txt')
+    fileMatrix=open(filename)
 
     lines = [line for line in fileMatrix]
     # First line is the column titles
