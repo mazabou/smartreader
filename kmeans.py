@@ -1,6 +1,8 @@
 from math import sqrt
-from PIL import Image,ImageDraw
+#from PIL import Image,ImageDraw
 import numpy as np
+from similarityMeasures import pearson
+import random
 
 def rotatematrix(data):
     newdata = []
@@ -18,8 +20,7 @@ def kcluster(rows, distance=pearson, k=4):
 
     lastmatches = None
     for t in range(100):
-        print
-        'Iteration %d' % t
+        print 'Iteration %d' % t
         bestmatches = [[] for i in range(k)]
         # Find which centroid is the closest for each row
         for j in range(len(rows)):
@@ -45,8 +46,8 @@ def kcluster(rows, distance=pearson, k=4):
 	#Calculating Calinski and Harabaz Index
 	#c, center of E
 	c = [np.mean(L) for L in zip(*rows)]
-	W_k = [[distance(cluster, row)^2 for row in bestmatches[i]].sum() for cluster in clusters].sum()
-	B_k = [distance(clusters[i], c)*len(bestmatches[i]) for i in range(k)].sum()
+	W_k = sum([sum([distance(clusters[i], rows[j])**2 for j in bestmatches[i]]) for i in range(k)])
+	B_k = sum([distance(clusters[i], c)*len(bestmatches[i]) for i in range(k)])
 	s = ((B_k)/(W_k))*((len(rows)-k)/(k-1))
     return bestmatches, s
 
