@@ -5,7 +5,7 @@ import random
 import pandas as pd
 import bokeh.plotting as bp
 from bokeh.models import HoverTool, BoxSelectTool
-from bokeh.plotting import figure, show, output_notebook
+from bokeh.plotting import figure, show, output_file
 
 def kcluster(rows, distance=pearson, k=4):
     # Determine the minimum and maximum values for each point

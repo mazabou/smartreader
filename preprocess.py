@@ -15,9 +15,19 @@ def readfile(filename='articlewordmatrix.txt'):
         rownames.append(p[0])
         # The data for this row is the remainder of the row
         data.append([float(x) for x in p[1:]])
+    sources = []
+    authors = [] 
+    url = []
+    published = []
+    for line in fileInfo:
+        p = line.strip().split('\t')
+        sources.append(p[1])
+        authors.append(p[2])
+        url.append(p[3])
+        published.append(p[4])
     fileMatrix.close()
     fileInfo.close()
-    return rownames, colnames, data
+    return rownames, colnames, data, [sources,authors,url,published]
 
 def writefile(rownames, colnames, data):
     fileMatrix=open('articlewordmatrix_processed.txt','w')
