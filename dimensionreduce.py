@@ -2,6 +2,9 @@ from math import sqrt
 import numpy as np
 from similarityMeasures import pearson
 import random
+from sklearn.decomposition import TruncatedSVD
+from sklearn.manifold import TSNE
+
 
 def scaledown(data, distance=pearson, rate=0.01):
     n = len(data)
@@ -50,3 +53,10 @@ def scaledown(data, distance=pearson, rate=0.01):
             loc[k][1] -= rate * grad[k][1]
 
     return loc
+	
+def reduction(data):
+	svd = TruncatedSVD(n_components=50, random_state=0)
+	svd_tfidf = svd.fit_transform(data)
+	tsne_model = TSNE(n_components=2, verbose=1, random_state=0)
+	tsne_tfidf = tsne_model.fit_transform(svd_tfidf)
+	return tsne_tfidf
