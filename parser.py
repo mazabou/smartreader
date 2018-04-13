@@ -12,12 +12,11 @@ from ParseTodb import ParseTodb
 ignorewords=set(['the','of','to','and','a','in','is','it','an','by','from','with'])
 
 class Parser:
-    def __init__(self,out="txt",rssFile="rssList.txt",quickCheck=False,Filter=True,Stem=False):
-        self.Filter = Filter
-        self.Stem = Stem
+
+    def __init__(self,out="txt",rssFile="rssList.txt",quickCheck=False,update=True):
         # Set up the output
         if out == "txt":
-            self.out = ParseTotxt()
+            self.out = ParseTotxt(update)
         elif out == "db":
             self.out = ParseTodb()
             
@@ -41,6 +40,11 @@ class Parser:
         for rssName in self.rssList.keys():
             rssFeed = self.rssList[rssName]
             rss = feedparser.parse(rssFeed)
+
+            print '\n'
+            print "Connecting to "+rssName
+            print "--------------"
+
             for entry in rss.entries:
                 title = entry["title"]
                 try:
@@ -65,6 +69,7 @@ class Parser:
     def addtoindex(self, url, soup, title, source, author, published):
             if self.out.isindexed(url): return
             if title == '': return
+
             print 'Indexing ' + url
             # Get the individual words
             if source[:2] == "NYT":
@@ -74,9 +79,9 @@ class Parser:
             text = text.encode('utf-8') #probleme d'encodage rencontre
             words = self.separatewords(text)
 
-            if self.Stem:
-                stemmer = snowballstemmer.stemmer('english');
-                words = stemmer.stemWords(words)
+
+            stemmer = snowballstemmer.stemmer('english');
+            words = stemmer.stemWords(words)
 
             self.out.add(title, source, author, url, published, words)
         

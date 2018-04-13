@@ -1,9 +1,19 @@
 class ParseTotxt:
-	def __init__(self):
+	def __init__(self,update):
 	    print 'Parsed data will be saved in articlesmetadata.txt and articlewordmatrix.txt'
 	    self.wordcounts={}
 	    self.articleList=[]
 	    self.articles=[]
+	    if update:
+	        print 'Loading previous data set //update'
+	        fileInfo=open('articlesmetadata.txt')
+	        self.articles = [line for line in fileInfo]
+	        fileInfo.close()
+
+	        self.articleList, colnames, data = self.readfile()
+	        for article,count in zip(self.articleList,data):
+	            self.wordcounts[article]=dict(zip(colnames,count))
+
 
 	# def init(self):
 	# 	print 'Parsed data will be saved in articlesmetadata.txt and articlewordmatrix.txt'
@@ -15,7 +25,7 @@ class ParseTotxt:
 	# 	print 'Parsed data is added to articlesmetadata.txt and articlewordmatrix.txt'
 
 	def add(self,title, source, author, url, published, words):
-	        self.articleList.append(url)
+	        self.articleList.append(title)
 
 	        self.articles.append(title+"\t"+source+"\t"+author+"\t"+url+"\t"+published)
 
@@ -25,12 +35,13 @@ class ParseTotxt:
 	            wc[word]+=1
 	        self.wordcounts[title]=wc
 
-	def isindexed(self,url):
-	        return url in self.articleList
+	def isindexed(self,title):
+	        return title in self.articleList
 	    
 	def commit(self):
-	    self.fileInfo=open('articlesmetadata.txt','w')
-	    self.fileMatrix=open('articlewordmatrix.txt','w')
+	    print 'Saving collected data...'
+	    fileInfo=open('articlesmetadata.txt','w')
+	    fileMatrix=open('articlewordmatrix.txt','w')
 	    wordlist=[]
 	    for wc in self.wordcounts.values():
 	        for word in wc.keys(): #set?
@@ -51,12 +62,13 @@ class ParseTotxt:
 	        
 	    for d in self.articles:
 	        try:
-	            self.fileInfo.write(d)
+	            fileInfo.write(d)
 	        except:
-	            self.fileInfo.write('error')
-	        self.fileInfo.write('\n')
-	    self.fileMatrix.close()
-	    self.fileInfo.close()
+	            fileInfo.write('error')
+	        fileInfo.write('\n')
+	    fileMatrix.close()
+	    fileInfo.close()
+	    print 'Data saved in articlewordmatrix.txt and articlesmetadata.txt'
 
 	def readfile(self):
 	    fileInfo=open('articlesmetadata.txt')
@@ -73,6 +85,6 @@ class ParseTotxt:
 	        rownames.append(p[0])
 	        # The data for this row is the remainder of the row
 	        data.append([float(x) for x in p[1:]])
-	    self.fileMatrix.close()
-	    self.fileInfo.close()
+	    fileMatrix.close()
+	    fileInfo.close()
 	    return rownames, colnames, data
