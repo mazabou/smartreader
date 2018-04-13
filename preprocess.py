@@ -18,16 +18,18 @@ def readfile(filename='articlewordmatrix.txt'):
     sources = []
     authors = [] 
     url = []
-    published = []
-    for line in fileInfo:
-        p = line.strip().split('\t')
-        sources.append(p[1])
-        authors.append(p[2])
-        url.append(p[3])
-        published.append(p[4])
+    #published = []
+    #for line in fileInfo:
+    #    p = line.strip().split('\t')
+    #    if p == ['error']:
+    #        p = ['None']*4
+    #    sources.append(p[1])
+    #    authors.append(p[2])
+    #    url.append(p[3])
+       #published.append(p[4])
     fileMatrix.close()
     fileInfo.close()
-    return rownames, colnames, data, [sources,authors,url,published]
+    return rownames, colnames, data
 
 def writefile(rownames, colnames, data):
     fileMatrix=open('articlewordmatrix_processed.txt','w')

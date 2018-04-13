@@ -29,8 +29,10 @@ def cosineSimilarity(v1,v2):
 
     # Sum of the products
     pSum = sum([x1 * x2 for x1, x2 in zip(v1,v2)])
-
-    return 1 - pSum / ( (sum1Sq*sum2Sq)**(1/2) )
+    
+    num = pSum
+    den = sqrt(sum1Sq*sum2Sq)
+    return(1 - num / den)
 
 def jaccardSimilarity(v1,v2):
     # Sums of the squares

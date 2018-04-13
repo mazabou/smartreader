@@ -58,7 +58,7 @@ def showfeatures(w,h,titles,wordvec,out='features.txt'):
         slist.reverse( )
         # Print the first six elements
         n=[s[1] for s in slist[0:6]]
-        outfile.write(str(n)+'\n')
+        print(str(n))
         patternnames.append(n)
         # Create a list of articles for this feature
         flist=[]
@@ -71,8 +71,8 @@ def showfeatures(w,h,titles,wordvec,out='features.txt'):
         flist.reverse( )
         # Show the top 3 articles
         for f in flist[0:3]:
-          outfile.write(str(f)+'\n')
-        outfile.write('\n')
+          print(str(f))
+        #outfile.write('\n')
     outfile.close()
     # Return the pattern names for later use 
     return toppatterns,patternnames
