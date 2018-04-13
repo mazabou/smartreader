@@ -23,7 +23,7 @@ class ParseTotxt:
 	        for word in words:
 	            wc.setdefault(word,0)
 	            wc[word]+=1
-	        self.wordcounts[url]=wc
+	        self.wordcounts[title]=wc
 
 	def isindexed(self,url):
 	        return url in self.articleList
@@ -42,7 +42,7 @@ class ParseTotxt:
 	    self.fileMatrix.write('\n')
 	    for article, wc in self.wordcounts.items():
 	        #deal with unicode outside the ascii range
-	        #blog=blog.encode('ascii','ignore')
+	        article=article.encode('ascii','ignore')
 	        self.fileMatrix.write(article)
 	        for word in wordlist:
 	            if word in wc: self.fileMatrix.write('\t%d' % wc[word])

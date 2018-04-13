@@ -1,8 +1,8 @@
 import numpy as np
 
-def readfile():
+def readfile(filename='articlewordmatrix.txt'):
     fileInfo=open('articlesmetadata.txt')
-    fileMatrix=open('articlewordmatrix.txt')
+    fileMatrix=open(filename)
 
     lines = [line for line in fileMatrix]
     # First line is the column titles
@@ -15,6 +15,18 @@ def readfile():
         rownames.append(p[0])
         # The data for this row is the remainder of the row
         data.append([float(x) for x in p[1:]])
+    sources = []
+    authors = [] 
+    url = []
+    #published = []
+    #for line in fileInfo:
+    #    p = line.strip().split('\t')
+    #    if p == ['error']:
+    #        p = ['None']*4
+    #    sources.append(p[1])
+    #    authors.append(p[2])
+    #    url.append(p[3])
+       #published.append(p[4])
     fileMatrix.close()
     fileInfo.close()
     return rownames, colnames, data

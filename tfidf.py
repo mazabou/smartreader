@@ -6,9 +6,9 @@ import numpy
 
 def termFreq(occvector):
 #en supposant qu'on ait en entree un vecteur occurence de mots pour chaque article
-    for i in range(len(occvector)):
-        if occvector[i] != 0:
-            occvector[i] = 1 + math.log(occvector[i])
+    for o in occvector:
+        if o != 0:
+            o = 1 + math.log(o)
     return occvector
 
 #inverse document frequency
