@@ -48,5 +48,13 @@ def normalization(v):
     sumSq = sum([pow(x, 2) for x in v])
     return v/pow(sumSq,1/2)
 
-def normalizedCosineSimilarity(v1,v2):
-    return sum([x1 * x2 for x1, x2 in zip(v1,v2)])
+def normalizedCosineSimilarity(col1,data1,col2,data2):
+    t=[]
+    for i in range(len(col1)):
+        try:
+            j = col2.index(col1[i])
+        except:
+            continue
+        t.append((i,j))
+
+    return sum([data1[i] * data2[j] for i, j in t])

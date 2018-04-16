@@ -12,11 +12,10 @@ from ParseTodb import ParseTodb
 ignorewords=set(['the','of','to','and','a','in','is','it','an','by','from','with'])
 
 class Parser:
-
-    def __init__(self,out="txt",rssFile="rssList.txt",quickCheck=False,update=True):
+    def __init__(self,out="txt",rssFile="rssList.txt",quickCheck=False):
         # Set up the output
         if out == "txt":
-            self.out = ParseTotxt(update)
+            self.out = ParseTotxt()
         elif out == "db":
             self.out = ParseTodb()
             
@@ -31,7 +30,7 @@ class Parser:
 
     def setFeedList(self,filename):
        file = open(filename)
-       for line in file: #? for line in file
+       for line in file:
             rssName, rssFeed = line.strip().split(' ')
             self.rssList[rssName] = rssFeed
        file.close()
@@ -41,9 +40,8 @@ class Parser:
             rssFeed = self.rssList[rssName]
             rss = feedparser.parse(rssFeed)
 
-            print '\n'
             print "Connecting to "+rssName
-            print "--------------"
+            print "-----------------------------------------------"
 
             for entry in rss.entries:
                 title = entry["title"]
@@ -63,14 +61,18 @@ class Parser:
                     continue
                 soup = BeautifulSoup(c.read(),"html.parser")
                 self.addtoindex(url, soup, title, rssName, author, published)
-        self.out.commit()
+
+        print "Parsing Ended."
+
+    def commit(self,dataFilename='data.csv',infoFilename='metadata.csv'):
+        self.out.commit(dataFilename,infoFilename)
 
     # Index an individual page
     def addtoindex(self, url, soup, title, source, author, published):
-            if self.out.isindexed(url): return
+            if self.out.isindexed(title): return
             if title == '': return
 
-            print 'Indexing ' + url
+            print ' Indexing ' + url
             # Get the individual words
             if source[:2] == "NYT":
                 text = self.getArticleNYT(soup)
@@ -80,10 +82,10 @@ class Parser:
             words = self.separatewords(text)
 
 
-            stemmer = snowballstemmer.stemmer('english');
-            words = stemmer.stemWords(words)
-
-            self.out.add(title, source, author, url, published, words)
+            #stemmer = snowballstemmer.stemmer('english');
+            #words = stemmer.stemWords(words)
+            if len(words) <> 0:
+                self.out.add(title, source, author, url, published, words)
         
 
 # Extract the text from an HTML page (no tags)
@@ -118,13 +120,7 @@ class Parser:
 # Separate the words by any non-whitespace character
     def separatewords(self,text):
         splitter = re.compile(r'\W*')
-        if self.Filter:
-            return self.filter([s.lower() for s in splitter.split(text) if s != ''])
-        else:
-            return [s.lower() for s in splitter.split(text) if s != '']
-
+        return self.filter([s.lower() for s in splitter.split(text) if s != ''])
+    
     def filter(self,words):
         return [word for word in words if (len(word)>1 and word.isalpha() and word not in ignorewords)] #list comprehension
-
-    def readfile(self):
-        return self.out.readfile()

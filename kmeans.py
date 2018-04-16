@@ -7,44 +7,47 @@ import bokeh.plotting as bp
 from bokeh.models import HoverTool, BoxSelectTool
 from bokeh.plotting import figure, show, output_file
 
-def kcluster(rows, distance=pearson, k=4):
-    # Determine the minimum and maximum values for each point
-    ranges = [(min([row[i] for row in rows]), max([row[i] for row in rows])) for i in range(len(rows[0]))]
+def kcluster(cols,data,L, distance=pearson, k=4):
     # Create k randomly placed centroids
-    clusters = [[random.random() * (ranges[i][1] - ranges[i][0]) + ranges[i][0] for i in range(len(rows[0]))] for j in range(k)]
+    clusters = [[random.random() for i in range(L)] for j in range(k)]
+    clusters_col = [list(range(L)) for i in range(len(data))] 
 
     lastmatches = None
     for t in range(100):
-        #print('Iteration %d' % t)
+        print('Iteration %d' % t)
         bestmatches = [[] for i in range(k)]
         # Find which centroid is the closest for each row
-        for j in range(len(rows)):
-            row = rows[j]
+        for j in range(len(data)):
+            col = cols[j]
+            row = data[j]
             bestmatch = 0
+            bestdistance = 2
             for i in range(k):
-                d = distance(clusters[i], row)
-                if d < distance(clusters[bestmatch], row): bestmatch = i
+                d = distance(clusters_col[i],clusters[i],col, row)
+                if d < bestdistance: bestmatch, bestdistance = i, d
             bestmatches[bestmatch].append(j)
         # If the results are the same as last time, this is complete
         if bestmatches == lastmatches: break
         lastmatches = bestmatches
         # Move the centroids to the average of their members
         for i in range(k):
-            avgs = [0.0] * len(rows[0])
+            avgs = [0.0] * len(L)
+            count = [0] *len(L)
             if len(bestmatches[i]) > 0:
                 for rowid in bestmatches[i]:
-                    for m in range(len(rows[rowid])):
-                        avgs[m] += rows[rowid][m]
-                for j in range(len(avgs)):
-                    avgs[j] /= len(bestmatches[i])
-                clusters[i] = avgs
+                    col = cols[rowid]
+                    row = data[rowid]
+                    for i in range(len(col)):
+                        avgs[col[i]] += row[i]
+                        count[col[i]] += 1
+            clusters[i] = [x/y for x,y in zip(avgs,count)]
     #Calculating Calinski and Harabaz Index
     #c, center of E
-    c = [np.mean(L) for L in zip(*rows)]
-    W_k = sum([sum([distance(clusters[i], rows[j])**2 for j in bestmatches[i]]) for i in range(k)])
-    B_k = sum([distance(clusters[i], c)*len(bestmatches[i]) for i in range(k)])
-    s = ((B_k)/(W_k))*((len(rows)-k)/(k-1))
-    return bestmatches, s
+    #c = [np.mean(L) for L in zip(*rows)]
+    #W_k = sum([sum([distance(clusters[i], rows[j])**2 for j in bestmatches[i]]) for i in range(k)])
+    #B_k = sum([distance(clusters[i], c)*len(bestmatches[i]) for i in range(k)])
+    #s = ((B_k)/(W_k))*((len(rows)-k)/(k-1))
+    return bestmatches
 
 def optimized_kmeans(rows, distance=pearson):
     list_data = []
