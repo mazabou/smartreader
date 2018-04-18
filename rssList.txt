@@ -1,118 +1,37 @@
-NYT http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml
-NYTTechnology http://feeds.nytimes.com/nyt/rss/Technology
-NYTSports http://www.nytimes.com/services/xml/rss/nyt/Sports.xml
-NYTBusiness http://feeds.nytimes.com/nyt/rss/Business
-NYTWorld http://www.nytimes.com/services/xml/rss/nyt/World.xml
-TechCrunch http://feeds.feedburner.com/TechCrunch/
-CNBC https://www.cnbc.com/id/100003114/device/rss/rss.html
-CNBCTech https://www.cnbc.com/id/19854910/device/rss/rss.html
-CNBCBusiness https://www.cnbc.com/id/10001147/device/rss/rss.html
-CNBCPolitics https://www.cnbc.com/id/10000113/device/rss/rss.html
-BBCWorldNews http://feeds.bbci.co.uk/news/world/rss.xml
-CBNWorldNews http://www.cbn.com/cbnnews/world/feed/
-ReutersWorldNews http://feeds.reuters.com/Reuters/worldNews
-BBCUKNews http://feeds.bbci.co.uk/news/rss.xml
-SkyUKNews http://news.sky.com/sky-news/rss/home/rss.xml
-CBNUSNews http://www.cbn.com/cbnnews/us/feed/
-ReutersUSNews http://feeds.reuters.com/Reuters/domesticNews
-YahooNews http://news.yahoo.com/rss/
-BBCTech http://feeds.bbci.co.uk/news/technology/rss.xml
-BBCBuisness http://feeds.bbci.co.uk/news/business/rss.xml
-WashingtonPost http://www.washingtonpost.com/rss/
-USATODAYTop http://rssfeeds.usatoday.com/usatoday-NewsTopStories
-NPRNews http://www.npr.org/rss/rss.php?id=1001
-APScience http://hosted.ap.org/lineups/SCIENCEHEADS-rss_2.0.xml?SITE=OHLIM&SECTION=HOME
-WiredTop http://feeds.wired.com/wired/index
-Macworld http://rss.macworld.com/macworld/feeds/main
-PCWorldMag http://feeds.pcworld.com/pcworld/latestnews
-TechWorld http://www.techworld.com/news/rss
-SportIllustrated http://www.si.com/rss/si_topstories.rss
-NBA http://www.nba.com/jazz/rss.xml
-ABCNews http://feeds.abcnews.com/abcnews/usheadlines
-CBS http://www.cbsnews.com/latest/rss/main
-WSJ http://online.wsj.com/xml/rss/3_7085.xml
-NBC http://feeds.nbcnews.com/feeds/topstories
-NBCWorld http://feeds.nbcnews.com/feeds/worldnews
-HuffPost http://www.huffingtonpost.com/feeds/verticals/world/index.xml
-NewYorker http://www.newyorker.com/feed/news
-NewScientistHealth http://feeds.newscientist.com/health
-BuzzfeedSports http://www.buzzfeed.com/sports.xml
-ESPNSports http://sports.espn.go.com/espn/rss/news
-TheVerge http://www.theverge.com/rss/group/features/index.xml
-Mashable http://mashable.com/category/rss/
-CNET http://www.cnet.com/rss/news/
-Recode http://recode.net/category/general/feed/
-Variety http://variety.com/feed/
-Rollingstone http://www.rollingstone.com/news.rss
-Economist http://www.economist.com/feeds/print-sections/77/business.xml
-SBNation ttp://feeds.feedburner.com/sportsblogs/sbnation.xml
-Deadspin https://deadspin.com/rss
-LEquipe hwww.lequipe.fr/rss/
-Techmeme techmeme.com/feed.xml
-MITTechReview http://feeds.arstechnica.com/arstechnica/technology-lab
-VentureBeat http://feeds.feedburner.com/venturebeat/SZYF
-MakeUseOf feeds.feedburner.com/Makeuseof
-WashingtonPostTech http://feeds.washingtonpost.com/rss/business/technology
-BuisnessInsiderTech http://feeds.feedburner.com/typepad/alleyinsider/silicon_alley_insider
-DailyExpressTech http://feeds.feedburner.com/daily-express-tech
-WSJ http://online.wsj.com/xml/rss/3_7011.xml
-FoxNews http://feeds.foxnews.com/foxnews/scitech
-Vox https://www.vox.com/rss/index.xml
-Drudgereport http://www.drudgereportfeed.com/rss.xml
-MarketWatch http://www.marketwatch.com/rss/topstories/
-Salon https://www.salon.com/feed/
-News9 http://www.news9.com/story/7520733/news9com-rss-feeds-available
-BBCSport http://feeds.bbci.co.uk/sport/rss.xml?edition=int
-NBA http://www.nba.com/rss/nba_rss.xml
-NFL http://www.nfl.com/rss/rsslanding?searchString=home
-Westhesportsguy https://www.westhesportsguy.com/feeds/posts/default
-FoxSports https://www.foxsports.com/rss-feeds
-Talksport https://talksport.com/rss
-CBSSport https://www.cbssports.com/xml/rss
-Sport24 https://www.sport24.co.za/RSS
-FIFA http://www.fifa.com/rss-feeds/index.html
-BostonSport http://archive.boston.com/tools/rss/sports/
-NUSport http://nusports.com/rss_feeds.aspx
-RTESport http://www.rte.ie/rss/
-Sport1 http://www.sport1.de/unternehmen/service/aktuelle-sport-news-per-rss-feed
-Triathlonmag https://www.triathlonmag.com.au/rss
-Hornetsports http://www.hornetsports.com/rss/index
-Entrepreneur https://www.entrepreneur.com/page/215927
-Bloomberg https://www.bloomberg.com/
-HarvardBusiness http://feeds.harvardbusiness.org/harvardbusiness/
-Freakonomics http://freakonomics.com//feed/
-TheBigPicture http://feeds.feedburner.com/TheBigPicture
-Inc http://feeds.inc.com/home/updates
-Fortune http://fortune.com/feed/
-TheEconomist http://www.economist.com/rss/the_world_this_week_rss.xml
-TheNonProfitTimes http://www.thenonprofittimes.com/feed/
-SBNBusiness http://www.sbnonline.com/feed/
-Mckinsey https://www.mckinsey.com/insights/rss.aspx
-HomeBuisnessMag https://homebusinessmag.com/feed/
-BusinessInsider http://feeds2.feedburner.com/businessinsider
-CalculatedRisk http://feeds.feedburner.com/CalculatedRisk
-HotelBusiness https://www.hotelbusiness.com/links/rss/hb_rss_01.php
-SlatePolitics http://www.slate.com/articles/news_and_politics/politics.teaser.all.10.rss/
-WorldAffairsJournal http://www.worldaffairsjournal.org/essay-feed.xml
-FoxNewsPolitics http://feeds.foxnews.com/foxnews/politics
-TheNation https://www.thenation.com/feed/?post_type=article
-DailySignal http://dailysignal.com//feed/
-MSNBC http://www.msnbc.com/feeds/latest
-Politico https://www.politico.com/rss/politics.xml
-RealWire https://www.realwire.com/rss/feeds.asp?cat=Politics
-GameStop https://www.gamespot.com/feeds/mashup/
-NintendoLife http://www.nintendolife.com/feeds/latest
-Joystiq http://www.joystiq.com/rss.xml
-IndieGames http://www.indiegames.com/atom.xml
-Arstechnica http://feeds.arstechnica.com/arstechnica/gaming/
-Polygon https://www.polygon.com/rss/index.xml
-PCgamer http://www.pcgamer.com/news/
-TouchArcade http://toucharcade.com/feed/
-GameInformer http://www.gameinformer.com/p/rss.aspx
-XBOX news.xbox.com/feed
-PlayStation blog.us.playstation.com/feed
-MyNintendoNews mynintendonews.com/feed
-RockPaperShotgun rockpapershotgun.com/feed
-PCgames pcgamesn.com/rss
-OperationSports operationsports.com/rss.xml
-PushSquare pushsquare.com/feeds/latest
+TechCrunch,Technologie,http://feeds.feedburner.com/TechCrunch/
+BBCWorldNews,World,http://feeds.bbci.co.uk/news/world/rss.xml
+ReutersWorldNews,World,http://feeds.reuters.com/Reuters/worldNews
+BBCUKNews,News,http://feeds.bbci.co.uk/news/rss.xml
+ReutersUSNews,News,http://feeds.reuters.com/Reuters/domesticNews
+YahooNews,News,http://news.yahoo.com/rss/
+BBCTech,Technologie,http://feeds.bbci.co.uk/news/technology/rss.xml
+BBCBuisness,Buisness,http://feeds.bbci.co.uk/news/business/rss.xml
+APScience,Science,http://hosted.ap.org/lineups/SCIENCEHEADS-rss_2.0.xml?SITE=OHLIM&SECTION=HOME
+SportIllustrated,Sports,http://www.si.com/rss/si_topstories.rss
+NBA,Sports,http://www.nba.com/jazz/rss.xml
+ABCNews,News,http://feeds.abcnews.com/abcnews/usheadlines
+CBS,News,http://www.cbsnews.com/latest/rss/main
+NewYorker,News,http://www.newyorker.com/feed/news
+ESPNSports,Sports,http://sports.espn.go.com/espn/rss/news
+CNET,Technologie,http://www.cnet.com/rss/news/
+Variety,Entertainment,http://variety.com/feed/
+Economist,Buisness,http://www.economist.com/feeds/print-sections/77/business.xml
+MITTechReview,Technologie,http://feeds.arstechnica.com/arstechnica/technology-lab
+BuisnessInsiderTech,Technologie,http://feeds.feedburner.com/typepad/alleyinsider/silicon_alley_insider
+DailyExpressTech,Technologie,http://feeds.feedburner.com/daily-express-tech
+FoxNews,News,http://feeds.foxnews.com/foxnews/scitech
+Drudgereport,News,http://www.drudgereportfeed.com/rss.xml
+BBCSport,Sports,http://feeds.bbci.co.uk/sport/rss.xml?edition=int
+NBA,Sports,http://www.nba.com/rss/nba_rss.xml
+NFL,Sports,http://www.nfl.com/rss/rsslanding?searchString=home
+Inc,News,http://feeds.inc.com/home/updates
+TheNonProfitTimes,Buisness,http://www.thenonprofittimes.com/feed/
+Mckinsey,Buisness,https://www.mckinsey.com/insights/rss.aspx
+BusinessInsider,News,http://feeds2.feedburner.com/businessinsider
+FoxNewsPolitics,Politics,http://feeds.foxnews.com/foxnews/politics
+TheNation,Politics,https://www.thenation.com/feed/?post_type=article
+MSNBC,News,http://www.msnbc.com/feeds/latest
+Politico,Politics,https://www.politico.com/rss/politics.xml
+GameStop,Gaming,https://www.gamespot.com/feeds/mashup/
+NintendoLife,Gaming,http://www.nintendolife.com/feeds/latest
+Arstechnica,Gaming,http://feeds.arstechnica.com/arstechnica/gaming/

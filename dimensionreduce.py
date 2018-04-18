@@ -1,12 +1,12 @@
 from math import sqrt
 import numpy as np
-from similarityMeasures import pearson
+from similarityMeasures import normalizedCosineSimilarity
 import random
 from sklearn.decomposition import TruncatedSVD
 from sklearn.manifold import TSNE
 
 
-def scaledown(data, distance=pearson, rate=0.01):
+def scaledown(data, distance=normalizedCosineSimilarity, rate=0.01):
     n = len(data)
     # The real distances between every pair of items
     realdist = [[distance(data[i], data[j]) for j in range(n)] for i in range(n)]

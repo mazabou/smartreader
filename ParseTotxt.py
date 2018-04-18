@@ -4,7 +4,7 @@ class ParseTotxt:
 	def __init__(self):
 	    self.wordcounts={}
 	    self.articles=[]
-	    self.articledf = pd.DataFrame(columns=["title","source","author","url","published"])
+	    self.articledf = pd.DataFrame(columns=["title","source","Category","author","url","published"])
 
 	    # if update:
 	    #     print 'Loading previous data set //update'
@@ -17,9 +17,10 @@ class ParseTotxt:
 	    #         self.wordcounts[article]=dict(zip(colnames,count))
 
 
-	def add(self,title, source, author, url, published, words):
+	def add(self,title, source, category, author, url, published, words):
 	    last = len(self.articledf)
-	    self.articledf.loc[last] = [title.encode('ascii','ignore'),source,author.encode('ascii','ignore'),url,published]
+	    title = title.encode('ascii','ignore')
+	    self.articledf.loc[last] = [title,source,category,author.encode('ascii','ignore'),url,published]
 	    
 	    self.articles.append(title)
 
@@ -50,10 +51,10 @@ class ParseTotxt:
 
 	    #Saving article data
 	    dataFile=open(dataFilename,'w')
-	    for article, wc in self.wordcounts.items():
+	    for article in self.articledf.title:
 	        #article=article.encode('ascii','ignore')
 	        #dataFile.write(article)
-	        print article
+	        wc = self.wordcounts[article]
 	        col = []
 	        data = []
 	        for i in range(len(wordlist)):

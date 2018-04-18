@@ -32,9 +32,8 @@ def open_data():
     for i in range(len(lines)/2):
         col.append(map(int,lines[2*i].strip().split(',')))
         data.append(map(float,lines[1+2*i].strip().split(',')))
-
     return col,data
 
 
 def open_metadata():
-	return pd.read_csv('metadata.csv')
+	return pd.read_csv('metadata.csv',index_col=0)
