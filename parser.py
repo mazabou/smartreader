@@ -106,8 +106,8 @@ class Parser:
 
             words = self.separatewords(text)
 
-            #stemmer = snowballstemmer.stemmer('english');
-            #words = stemmer.stemWords(words)
+            stemmer = snowballstemmer.stemmer('english');
+            words = stemmer.stemWords(words)
             if len(words) <> 0:
                 self.out.add(title, source, category, author, url, published, words)
         

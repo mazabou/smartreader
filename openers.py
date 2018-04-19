@@ -1,13 +1,13 @@
 import pandas as pd
 from scipy.sparse import csr_matrix
 
-def open_words():
-    df = pd.read_csv('words.csv')
+def open_words(name = 'words.csv'):
+    df = pd.read_csv(name)
     df.loc[0]=range(df.shape[1])
     return df.to_dict('records')[0]
 
-def open_matrix():
-    file = open('data.csv','r')
+def open_matrix(name = 'data.csv'):
+    file = open(name,'r')
     lines = [line for line in file]
     file.close()
 
@@ -22,18 +22,21 @@ def open_matrix():
 
     return csr_matrix((data, (row, col)))
 
-def open_data():
-    file = open('data.csv','r')
+def open_data(name = 'data.csv'):
+    file = open(name,'r')
     lines = [line for line in file]
     file.close()
 
     col = []
     data = []
     for i in range(len(lines)/2):
-        col.append(map(int,lines[2*i].strip().split(',')))
-        data.append(map(float,lines[1+2*i].strip().split(',')))
+        try:
+            col.append(map(int,lines[2*i].strip().split(',')))
+            data.append(map(float,lines[1+2*i].strip().split(',')))
+        except:
+            print i
     return col,data
 
 
-def open_metadata():
-	return pd.read_csv('metadata.csv',index_col=0)
+def open_metadata(name = 'metadata.csv'):
+	return pd.read_csv(name,index_col=0)

@@ -37,7 +37,7 @@ class ParseTotxt:
 	    print 'Saving collected data...'
 
 	    # Saving the words in the words file
-	    wordFile = open('words.csv','w')
+	    wordFile = open('bigwords.csv','w')
 	    wordlist = []
 	    for wc in self.wordcounts.values():
 	        for word in wc.keys(): #set?

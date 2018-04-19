@@ -43,9 +43,12 @@ def pruning(data,col,colnames,lowerthreshold,higherthreshold):
     mapper = dict(zip(wordstokeep,range(len(wordstokeep))))
 
     for d,c in zip(data,col):
-        T1,T2 = zip(*filter(lambda x: x[0] in wordstokeep,zip(c,d)))
-        col1.append(map(lambda x: mapper[x], list(T1)))
-        data1.append(list(T2))
+        try:
+            T1,T2 = zip(*filter(lambda x: x[0] in wordstokeep,zip(c,d)))
+            col1.append(map(lambda x: mapper[x], list(T1)))
+            data1.append(list(T2))
+        except:
+            print "no!"
 
     return data1, col1, wordstokeep
     
