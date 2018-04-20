@@ -1,4 +1,5 @@
 from numpy import *
+
 def difcost(a, b):
     dif = 0
     # Loop over every row and column in the matrix

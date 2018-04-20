@@ -14,6 +14,7 @@ from scipy.sparse import csr_matrix
 from math import pi
 import preprocess as pp
 from openers import *
+import NMF
 
 # Loading data
 articledf = open_metadata()
@@ -110,6 +111,11 @@ def callback(attr, old, new):
 		arr = np.array(data2[art2i[menu.value]])
 		top10 = [words2[l] for l in [col[art2i[menu.value]][p] for p in arr.argsort()[-10:][::-1]]]
 		source1.data = ColumnDataSource(dict(words=top10,)).data
+	
+	top3 = [str(patternnames[toppatterns[i][it][1]]) for it in range(3)]
+	top3_w = [toppatterns[i][it][0] for it in range(3)]
+
+	source2.data = ColumnDataSource(dict(features=top3,weights=top3_w)).data
 	par.text = "Finished!"
 
 menu.on_change('value', callback)
@@ -238,54 +244,92 @@ data_table = DataTable(source=source1, columns=[TableColumn(field="words", title
 
 p1 = Paragraph(text="Top 10 words")
 
+data1e,col1e,colnames1e = pp.pruning(data,col,colnames,0.01,0.4)
+data2e = pp.tfidf(data1e,col1e,len(colnames1e))
+data3e = pp.normalization(data2e)
+row1e = [[i for j in range(len(col1e[i]))] for i in range(len(col1e))]
 
-newlayout = layout([menu],[column(menu_proc,widgetbox(range_slider,button,par)),column(p1,data_table)],[plot])
+datae = [e for v in data3e for e in v]
+cole = [e for v in col1e for e in v]
+rowe = [e for v in row1e for e in v]
+
+matrixe = csr_matrix((datae,(rowe, cole))).toarray()
+
+w,features = NMF.factorize(matrixe,pc=20,iter=20)
+
+pc,wc=np.shape(features)
+toppatterns=[[] for it in range(len(articles))]
+patternnames=[]
+# Loop over all the features
+for it in range(pc):
+	slist=[]
+	# Create a list of words and their weights
+	for j in range(wc):
+		slist.append((features[it,j],words2[colnames1e[j]])) 
+
+	# Reverse sort the word list 
+	slist.sort()
+	slist.reverse()
+
+	# Print the first six elements
+	n=[s[1] for s in slist[0:6]]
+	#print(str(n))
+	patternnames.append(n)
+
+	# Create a list of articles for this feature
+	flist=[]
+	for j in range(len(articles)):
+		# Add the article with its weight
+		toppatterns[j].append((w[j,it],it,articles[j]))
+		toppatterns[j].sort() 
+		toppatterns[j].reverse()
+
+top3 = [str(patternnames[toppatterns[0][it][1]]) for it in range(3)]
+top3_w = [toppatterns[0][it][0] for it in range(3)]
+
+source2 = ColumnDataSource(dict(features=top3,weights=top3_w))
+data_table_f = DataTable(source=source2, columns=[TableColumn(field="weights", title="Weight"),TableColumn(field="features", title="Feature"),], width=500, height=280)
+
+pnmf = Paragraph(text="Top 3 features with NMF")
+
+newlayout = layout([menu],[column(menu_proc,widgetbox(range_slider,button,par)),column(p1,data_table),column(pnmf,data_table_f)],[plot])
+
 
 # Create a Panel with a title for each tab
 first = Panel(child=newlayout, title='Pre-Processing')
 
-data1,col1,colnames1 = pp.pruning(data,col,colnames,range_slider.value[0],range_slider.value[1])
-data2 = pp.tfidf(data1,col1,len(colnames1))
-data3 = pp.normalization(data2)
 
-data_pp = data3[:]
-col_pp = col1[:]
+# import similarityMeasures as sm
+# import kmeans
 
-#Generating row
-row_pp = [[i for j in range(len(col_pp[i]))] for i in range(len(col_pp))]
+# bestmatches,clusters,clusters_col = kmeans.kcluster(col_pp,data_pp,len(colnames_pp),distance = sm.normalizedCosineSimilarity,k=4)
+# import dimensionreduce
 
-colnames_pp = colnames1[:]
-import similarityMeasures as sm
-import kmeans
 
-bestmatches,clusters,clusters_col = kmeans.kcluster(col_pp,data_pp,len(colnames_pp),distance = sm.normalizedCosineSimilarity,k=4)
-import dimensionreduce
-data_csr = [e for v in data_pp for e in v]
-col_csr = [e for v in col_pp for e in v]
-row_csr = [e for v in row_pp for e in v]
+# loc = dimensionreduce.reduction(matrix)
 
-loc = dimensionreduce.reduction(csr_matrix((data_csr,(row_csr, col_csr))).toarray())
+# rownames = articledf.title
+# colormap = np.array(["#6d8dca", "#69de53", "#723bca", "#c3e14c", "#c84dc9", "#68af4e", "#6e6cd5","#e3be38", "#4e2d7c", "#5fdfa8", "#d34690", "#3f6d31", "#d44427", "#7fcdd8", "#cb4053", "#5e9981","#803a62", "#9b9e39", "#c88cca", "#e1c37b", "#34223b", "#bdd8a3", "#6e3326", "#cfbdce", "#d07d3c","#52697d", "#7d6d33", "#d27c88", "#36422b", "#b68f79"])
+# plot_kmeans = figure(plot_width=700, plot_height=600, title="KMeans clustering of the news",tools="pan,wheel_zoom,box_zoom,reset,hover,previewsave",x_axis_type=None, y_axis_type=None, min_border=1)
 
-rownames = articledf.title
-colormap = np.array(["#6d8dca", "#69de53", "#723bca", "#c3e14c", "#c84dc9", "#68af4e", "#6e6cd5","#e3be38", "#4e2d7c", "#5fdfa8", "#d34690", "#3f6d31", "#d44427", "#7fcdd8", "#cb4053", "#5e9981","#803a62", "#9b9e39", "#c88cca", "#e1c37b", "#34223b", "#bdd8a3", "#6e3326", "#cfbdce", "#d07d3c","#52697d", "#7d6d33", "#d27c88", "#36422b", "#b68f79"])
-plot_kmeans = figure(plot_width=700, plot_height=600, title="KMeans clustering of the news",tools="pan,wheel_zoom,box_zoom,reset,hover,previewsave",x_axis_type=None, y_axis_type=None, min_border=1)
+# kmeans_df = pd.DataFrame(loc, columns=['x', 'y'])
+# cluster_list = [0]*len(rownames)
+# for i in range(1,len(bestmatches)):
+#     for j in bestmatches[i]:
+#         cluster_list[j]=i
+# kmeans_df['cluster'] = pd.DataFrame(cluster_list)
+# kmeans_df['title'] = pd.DataFrame(rownames)
+# kmeans_df['color'] = colormap[cluster_list]
+# kmeans_df['source'] = articledf.source
+# plot_kmeans.scatter(x='x', y='y',color='color', source=kmeans_df)
+# hover = plot_kmeans.select(dict(type=HoverTool))
+# hover.tooltips={"title": "@title","cluster":"@cluster","source":"@source"}
 
-kmeans_df = pd.DataFrame(loc, columns=['x', 'y'])
-cluster_list = [0]*len(rownames)
-for i in range(1,len(bestmatches)):
-    for j in bestmatches[i]:
-        cluster_list[j]=i
-kmeans_df['cluster'] = pd.DataFrame(cluster_list)
-kmeans_df['title'] = pd.DataFrame(rownames)
-kmeans_df['color'] = colormap[cluster_list]
-kmeans_df['source'] = articledf.source
-plot_kmeans.scatter(x='x', y='y',color='color', source=kmeans_df)
-hover = plot_kmeans.select(dict(type=HoverTool))
-hover.tooltips={"title": "@title","cluster":"@cluster","source":"@source"}
+# second = Panel(child=plot_kmeans, title='Clustering')
 
-second = Panel(child=plot_kmeans, title='Clustering')
+# # Put the Panels in a Tabs object
+# tabs = Tabs(tabs=[first,second])
 
-# Put the Panels in a Tabs object
-tabs = Tabs(tabs=[first,second])
+tabs = Tabs(tabs = [first])
 
 curdoc().add_root(tabs)

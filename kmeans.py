@@ -51,10 +51,10 @@ def kcluster(cols,data,L, distance=normalizedCosineSimilarity, k=4):
             clusters[i] = [y != 0 and x/y or 0 for x,y in zip(avgs,count)]
     #Calculating Calinski and Harabaz Index
     #c, center of E
-    #c = [np.mean(L) for L in zip(*rows)]
-    #W_k = sum([sum([distance(clusters[i], rows[j])**2 for j in bestmatches[i]]) for i in range(k)])
-    #B_k = sum([distance(clusters[i], c)*len(bestmatches[i]) for i in range(k)])
-    #s = ((B_k)/(W_k))*((len(rows)-k)/(k-1))
+    #c = [np.mean(L) for L in zip(*clusters)]
+    #W_k = sum([sum([distance(clusters_col[i],clusters[i],cols[j], data[j])**2 for j in bestmatches[i]]) for i in range(k)])
+    #B_k = sum([distance(clusters_col[i],clusters[i],clusters_col[i],c)*len(bestmatches[i]) for i in range(k)])
+    #s = ((B_k)/(W_k))*((L-k)/(k-1))
     return bestmatches, clusters, clusters_col
 
 def optimized_kmeans(rows, distance=normalizedCosineSimilarity):
