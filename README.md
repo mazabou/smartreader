@@ -1,4 +1,6 @@
-## Projet
+## SmartReader
+SmartReader is a news aggregator that learns what subjects you are interested in. 
+
 ### Télécharger les articles d'actualité à partir de plusieurs flux (Base de données)
 1. Les principaux médias proposent des flux RSS:   
    RSS =<titre> + <description> de l'article + un <lien> vers le site concerné
@@ -33,3 +35,6 @@
 3. Création de la base des données d'articles
 4. Partie serveur
 5. Développement de l'application Android
+
+--------
+<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
